@@ -8,6 +8,7 @@ DATA_DIR=1
 GIT_URL=""
 PROJECT_NAME=
 RQR_CONDITION=0
+DB_CONDITION=0
 GIT_CONDITION=0
 README_CONDITION=0
 
@@ -19,6 +20,8 @@ while test $# -gt 0; do
             RQR_CONDITION=1;;
         -rd | --readme)
             README_CONDITION=1;;
+        -db | --database)
+            DB_CONDITION=1;;
         -g | --git)
             GIT_CONDITION=1;
             [[ "${2:0:1}" != "-" ]] && GIT_URL="$2" && shift;;
@@ -46,15 +49,15 @@ if [[ -n ${GIT_URL} ]]; then
     PROJECT_NAME=${PROJECT_NAME}/${BASE}
 fi
 
-[[ "${README_CONDITION}" -eq 1 ]] &&  touch ${PROJECT_NAME}/README.md
-[[ "${RQR_CONDITION}" -eq 1 ]] && touch ${PROJECT_NAME}/requirements.txt
-[[ "${LOG_DIR}" -eq 1 ]] && mkdir -p ${PROJECT_NAME}/logs/{prediction,training}
-
 mkdir -p ${PROJECT_NAME}/data/{raw,final,excluded}
 mkdir -p ${PROJECT_NAME}/analysis/{results,analysis_utils}
-mkdir -p ${PROJECT_NAME}/scripts/{core,models,preprocessing,dataloader}
+mkdir -p ${PROJECT_NAME}/scripts/{core,models,preprocess,dataloader,training,prediciton}
 mkdir -p ${PROJECT_NAME}/results/{training,prediction}
 
+[[ "${README_CONDITION}" -eq 1 ]] &&  touch ${PROJECT_NAME}/README.md
+[[ "${DB_CONDITION}" -eq 1 ]] &&  mkdir -p ${PROJECT_NAME}/scripts/database
+[[ "${RQR_CONDITION}" -eq 1 ]] && touch ${PROJECT_NAME}/requirements.txt
+[[ "${LOG_DIR}" -eq 1 ]] && mkdir -p ${PROJECT_NAME}/logs/{prediction,training}
 
 if [[ "${GIT_CONDITION}" -eq 1 && -z ${GIT_URL} ]]; then 
     cd ${PROJECT_NAME}; git init; touch .gitignore;
